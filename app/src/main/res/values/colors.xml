@@ -3,4 +3,15 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+
+    <color name="carnation">#FF5355</color>
+    <color name="viking">#5FC1CC</color>
+    <color name="algae_green">#8CE1A8</color>
+    <color name="light_orchid">#E28BDA</color>
+    <color name="old_gold">#CFB53B</color>
+    <color name="green">#09C818</color>
+    <color name="royal_blue">#524BF1</color>
+    <color name="electric_violet">#B016E8</color>
+    <color name="martini">#9B9B9B</color>
+    <color name="gorse">#FFFF55</color>
 </resources>

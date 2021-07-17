@@ -1,8 +1,14 @@
 package com.ariexiet.maru.model;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.ariexiet.maru.R;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 
 public class MeetingRoom {
@@ -10,7 +16,15 @@ public class MeetingRoom {
 	private int mRoomLogo;
 	private int mColor;
 	private String mName;
+	private final List<List<Integer>> mListColor = Arrays.asList(Arrays.asList(255,83,85),Arrays.asList(95,193,204),
+			Arrays.asList(140,225,168),Arrays.asList(226,139,218),Arrays.asList(207,181,59),Arrays.asList(9,200,24),
+			Arrays.asList(82,75,241),Arrays.asList(176,22,232),Arrays.asList(155,155,155),Arrays.asList(255,255,85));
 
+	/**
+	 * Defines the MeetingRoom object
+	 * @param roomNumber the assigned number for this room
+	 *                   for each number the room will be assigned a logo with a specific color and a label
+	 */
 	public MeetingRoom(int roomNumber) {
 		mRoomNumber = roomNumber;
 	}
@@ -22,6 +36,7 @@ public class MeetingRoom {
 	public void setRoomNumber(int roomNumber) {
 		mRoomNumber = roomNumber;
 	}
+
 	public String getRoomName() {
 		switch (mRoomNumber) {
 			case 1:
@@ -93,38 +108,9 @@ public class MeetingRoom {
 		return mRoomLogo;
 	}
 	public int getRoomColor() {
-		switch (mRoomNumber) {
-			case 1:
-				mColor = Color.rgb(255, 83, 85);
-				break;
-			case 2:
-				mColor = Color.rgb(95, 193, 204);
-				break;
-			case 3:
-				mColor = Color.rgb(140, 225, 168);
-				break;
-			case 4:
-				mColor = Color.rgb(226, 139, 218);
-				break;
-			case 5:
-				mColor = Color.rgb(208, 166, 56);
-				break;
-			case 6:
-				mColor = Color.rgb(9, 255, 24);
-				break;
-			case 7:
-				mColor = Color.rgb(82, 75, 241);
-				break;
-			case 8:
-				mColor = Color.rgb(176, 22, 232);
-				break;
-			case 9:
-				mColor = Color.rgb(155, 155, 155);
-				break;
-			case 10:
-				mColor = Color.rgb(255, 255, 85);
-				break;
-		}
+		mColor = Color.rgb(mListColor.get(mRoomNumber -1).get(0),
+				mListColor.get(mRoomNumber -1).get(1), mListColor.get(mRoomNumber -1).get(2));
+		Log.d(TAG, "getRoomColor: DEBUG:" + mColor);
 		return mColor;
 	}
 }

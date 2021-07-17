@@ -26,6 +26,4 @@ public interface MeetingApiService {
 
 	void createMeeting(Meeting meeting);
 
-	void createPreparedMeeting(ServiceMeeting serviceMeeting);
-
 }

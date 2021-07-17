@@ -3,11 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_sort"
-        android:title="@string/filtre_par_date"
+        android:title="@string/date_filter"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_sort2"
-        android:title="@string/filtre_par_salle"
+        android:title="@string/room_filter"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_all"
+        android:title="@string/display_all"
         app:showAsAction="never"/>
 
 </menu>

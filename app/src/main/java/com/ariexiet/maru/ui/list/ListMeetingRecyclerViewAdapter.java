@@ -1,7 +1,6 @@
 package com.ariexiet.maru.ui.list;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,21 +20,17 @@ import com.ariexiet.maru.ui.details.DetailsMeetingFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ *  Displays each meeting in the list of meetings
+ */
 public class ListMeetingRecyclerViewAdapter extends RecyclerView.Adapter<ListMeetingRecyclerViewAdapter.ViewHolder> {
 	private static List<Meeting> mMeetings;
 	private static Context mContext;
-	public int mYear;
-	public int mMonth;
-	public int mDayOfMonth;
-	public Calendar mC = Calendar.getInstance();
 
 	public ListMeetingRecyclerViewAdapter(List<Meeting> meetings, Context context) {
 		mMeetings = meetings;
@@ -47,7 +42,7 @@ public class ListMeetingRecyclerViewAdapter extends RecyclerView.Adapter<ListMee
 		public ImageView mRoomLogo;
 		@BindView(R.id.item_list_name)
 		public TextView mMeetingName;
-		@BindView(R.id.item_list_participants)
+		@BindView(R.id.item_list_attendees)
 		public TextView mParticipants;
 		@BindView(R.id.item_list_delete_button)
 		public ImageButton mDeleteButton;
@@ -55,12 +50,10 @@ public class ListMeetingRecyclerViewAdapter extends RecyclerView.Adapter<ListMee
 		public ViewHolder(@NonNull View itemView) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
-			itemView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					DetailsMeetingFragment fragment = DetailsMeetingFragment.newInstance(mMeetings.get(ViewHolder.this.getAdapterPosition()), mContext);
-					((MainActivity) mContext).replaceFragment(fragment, "frags");
-				}
+			itemView.setOnClickListener(v -> {
+				DetailsMeetingFragment fragment = DetailsMeetingFragment
+						.newInstance(mMeetings.get(ViewHolder.this.getBindingAdapterPosition()), mContext);
+				((MainActivity) mContext).replaceFragment(fragment, "frags");
 			});
 		}
 	}
@@ -75,42 +68,29 @@ public class ListMeetingRecyclerViewAdapter extends RecyclerView.Adapter<ListMee
 	@Override
 	public void onBindViewHolder(@NonNull ListMeetingRecyclerViewAdapter.ViewHolder holder, final int position) {
 		final Meeting mMeeting = mMeetings.get(position);
-		String mAttendeesToText = "";
+		StringBuilder mAttendeesToText = new StringBuilder();
 		ArrayList<Employee> mEmployeeToText = mMeeting.getAttendees();
 		if (mEmployeeToText != null) {
 			for(Employee in : mEmployeeToText) {
-				mAttendeesToText += in.getName();
+				mAttendeesToText.append(in.getName());
 				if(in != (mEmployeeToText.get(mEmployeeToText.size() - 1))) {
-					mAttendeesToText += ", ";
+					mAttendeesToText.append(", ");
 				}
 			}
 		}
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-		holder.mMeetingName.setText(mMeeting.getSubject() + ", " + dateFormat.format(mMeeting.getDate().getTime()));
-		holder.mParticipants.setText(mAttendeesToText);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy à HH:mm");
+		holder.mMeetingName.setText(mMeeting.getSubject() + " - Le " +
+				dateFormat.format(mMeeting.getDate().getTime()));
+		holder.mParticipants.setText(mAttendeesToText.toString());
 		holder.mRoomLogo.setImageResource(mMeeting.getRoom().getRoomLogo());
-		//holder.mDeleteButton.setOnClickListener(v -> EventBus.getDefault().post(new DeleteMeetingEvent(mMeeting)));
 		holder.mDeleteButton.setOnClickListener(view -> {
 			DI.getMeetingApiService().deleteMeeting(mMeeting);
 			notifyItemRemoved(position);
 			});
-
 	}
 
-	public void sortItemsByDate(List<Meeting> meetingsByDate){
-		mMeetings = meetingsByDate;
-		this.notifyDataSetChanged();
-	}
-
-	public void sortItemsByRoom(){
-		Collections.sort(mMeetings, new Comparator<Meeting>() {
-			@Override
-			public int compare(Meeting o1, Meeting o2) {
-				int num1 = o1.getRoom().getRoomNumber();
-				int num2 = o2.getRoom().getRoomNumber();
-				return Integer.compare(num1, num2);
-			}
-		});
+	public void sortItems(List<Meeting> newMeetings){
+		mMeetings = newMeetings;
 		this.notifyDataSetChanged();
 	}
 
@@ -122,5 +102,4 @@ public class ListMeetingRecyclerViewAdapter extends RecyclerView.Adapter<ListMee
 			return mMeetings.size();
 		}
 	}
-
 }

@@ -1,6 +1,5 @@
 package com.ariexiet.maru.ui.details;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +17,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ *  Used to display each employee in the list of employees attending the meeting
+ */
 public class AttendeesRecyclerViewAdapter extends RecyclerView.Adapter<AttendeesRecyclerViewAdapter.ViewHolder> {
 
 	private static List<Employee> mAttendees;
 	private static int mColor;
-	private static Context mContext;
 
-	public AttendeesRecyclerViewAdapter(List<Employee> attendees, int color, Context context) {
+	public AttendeesRecyclerViewAdapter(List<Employee> attendees, int color) {
 		mAttendees = attendees;
-		mContext = context;
 		mColor = color;
 	}
 
@@ -56,7 +56,6 @@ public class AttendeesRecyclerViewAdapter extends RecyclerView.Adapter<Attendees
 		final Employee mAttendee = mAttendees.get(position);
 		holder.mAttendeeEmail.setText(mAttendee.getEmail());
 		holder.mAttendeeName.setText(mAttendee.getName());
-		holder.mLayout.setBackgroundColor(mColor);
 	}
 
 	@Override

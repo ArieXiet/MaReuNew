@@ -21,13 +21,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Displays each room's data with a checkbox for the list
+ */
 public class RoomCheckListRecyclerViewAdapter extends RecyclerView.Adapter<RoomCheckListRecyclerViewAdapter.ViewHolder> {
 
 	private static List<MeetingRoom> mRooms;
 	private static Context mContext;
 	public MeetingRoom mCheckedRoom;
 	static SparseBooleanArray itemStateArray = new SparseBooleanArray();
-	private static final String TAG = "RoomCheckListRecyc";
 	private RecyclerView mRecyclerView;
 
 	public RoomCheckListRecyclerViewAdapter(List<MeetingRoom> rooms, Context context) {
@@ -43,14 +45,13 @@ public class RoomCheckListRecyclerViewAdapter extends RecyclerView.Adapter<RoomC
 		@BindView(R.id.room_logo_check)
 		public ImageView mRoomLogo;
 
-
 		public ViewHolder(@NonNull View itemView) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
 			itemView.setOnClickListener(this);
 		}
 		public void bind (int position) {
-			int adapterPosition = getAdapterPosition();
+			int adapterPosition = getBindingAdapterPosition();
 			if (!itemStateArray.get(position, false)) {
 				mCheckBox.setChecked(false);
 				itemStateArray.put(adapterPosition, false);
@@ -63,15 +64,6 @@ public class RoomCheckListRecyclerViewAdapter extends RecyclerView.Adapter<RoomC
 
 		@Override
 		public void onClick(View v) {
-			/*int adapterPosition = getAdapterPosition();
-			if (!itemStateArray.get(adapterPosition, false)) {
-				mCheckBox.setChecked(true);
-				itemStateArray.put(adapterPosition, true);
-			}
-			else  {
-				mCheckBox.setChecked(false);
-				itemStateArray.put(adapterPosition, false);
-			}*/
 		}
 	}
 	@NonNull
@@ -90,20 +82,14 @@ public class RoomCheckListRecyclerViewAdapter extends RecyclerView.Adapter<RoomC
 		}
 		holder.mCheckBox.setOnClickListener(v -> {
 			if(holder.mCheckBox.isChecked()) {
-				//holder.mCheckBox.setChecked(false);
-				//TODO : passer tout en faux
 				mRecyclerView = ((MainActivity)mContext).findViewById(R.id.list_room_check);
-				int mCounter = mRecyclerView.getChildCount();
-				//programmer boucle pour parcourir les éléments du recycler view
 				itemStateArray.put(position, true);
 				mCheckedRoom = mRoom;
 			} else {
-				//holder.mCheckBox.setChecked(true);
 				itemStateArray.put(position, false);
 				mCheckedRoom = null;
 			}
 		});
-
 		holder.mRoomName.setText(mRoom.getRoomName());
 		holder.mRoomLogo.setImageResource(mRoom.getRoomLogo());
 	}

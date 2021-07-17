@@ -21,8 +21,10 @@ import com.ariexiet.maru.model.Employee;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
+/**
+ *  Displays the list of attendees to the meeting displayed in the details fragment
+ */
 public class ListAttendeesFragment extends Fragment {
 	private static final String ARG_COLOR = "color";
 	private RecyclerView mRecyclerView;
@@ -57,7 +59,7 @@ public class ListAttendeesFragment extends Fragment {
 		Context context = v.getContext();
 		mRecyclerView = (RecyclerView) v;
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-		mRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
+		mRecyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 		initList();
 		return v;
 	}
@@ -68,7 +70,7 @@ public class ListAttendeesFragment extends Fragment {
 	}
 
 	private void initList() {
-		mRecyclerView.setAdapter(new AttendeesRecyclerViewAdapter(mAttendees, mColor, getContext()));
+		mRecyclerView.setAdapter(new AttendeesRecyclerViewAdapter(mAttendees, mColor));
 	}
 
 	@Override

@@ -20,16 +20,10 @@ public class DatePickerFragment extends DialogFragment {
 		int year = c.get(Calendar.YEAR);
 		int month = c.get(Calendar.MONTH);
 		int day = c.get(Calendar.DAY_OF_MONTH);
-		return new DatePickerDialog(getActivity(), mListener, year, month, day);
+		return new DatePickerDialog(requireActivity(), mListener, year, month, day);
 	}
 
 	public DatePickerFragment(DatePickerDialog.OnDateSetListener listener) {
 		mListener = listener;
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		//getActivity().getSupportFragmentManager().popBackStack("frags", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 	}
 }

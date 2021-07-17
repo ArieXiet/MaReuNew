@@ -2,7 +2,6 @@ package com.ariexiet.maru.ui.new_meeting;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,18 +23,17 @@ import com.ariexiet.maru.model.Employee;
 import com.ariexiet.maru.service.MeetingApiService;
 
 import java.util.List;
-import java.util.Objects;
 
-import static android.content.ContentValues.TAG;
-
+/**
+ *  Displays a list of employee with a checkbox and collect the checked ones to create a list
+ */
 public class AttendeesCheckListFragment extends Fragment {
 	private MeetingApiService mApiService;
 	private RecyclerView mRecyclerView;
 	private AttendeesCheckListRecyclerViewAdapter mAdapter;
 
 	public static AttendeesCheckListFragment newInstance() {
-		AttendeesCheckListFragment fragment = new AttendeesCheckListFragment();
-		return fragment;
+		return new AttendeesCheckListFragment();
 	}
 
 	@Override
@@ -52,15 +50,12 @@ public class AttendeesCheckListFragment extends Fragment {
 		mRecyclerView = view.findViewById(R.id.list_attendees_check);
 		Button mAttendeeButton = view.findViewById(R.id.attendees_button);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-		mRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
+		mRecyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 		initList();
-		mAttendeeButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mApiService.getServiceMeeting().setAttendees(mAdapter.mCheckedEmployees);
-				NewMeetingFragment fragment = new NewMeetingFragment();
-				((MainActivity)getActivity()).replaceFragment(fragment, "frags");
-			}
+		mAttendeeButton.setOnClickListener(v -> {
+			mApiService.getServiceMeeting().setAttendees(mAdapter.mCheckedEmployees);
+			NewMeetingFragment fragment = new NewMeetingFragment();
+			((MainActivity) requireActivity()).replaceFragment(fragment, "frags");
 		});
 		return view;
 	}
@@ -81,12 +76,5 @@ public class AttendeesCheckListFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		initList();
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		//NewMeetingFragment fragment = new NewMeetingFragment();
-		//((MainActivity)getActivity()).replaceFragment(fragment, "frags");
 	}
 }

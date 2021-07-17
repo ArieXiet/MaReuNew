@@ -2,9 +2,7 @@ package com.ariexiet.maru.ui.list;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,16 +19,19 @@ import com.ariexiet.maru.di.DI;
 import com.ariexiet.maru.model.Meeting;
 import com.ariexiet.maru.service.MeetingApiService;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Displays the list of meetings
+ */
 public class ListMeetingFragment extends Fragment {
 	private MeetingApiService mApiService;
 	private RecyclerView mRecyclerView;
-	private ListMeetingRecyclerViewAdapter mAdapter;
+	private static List<Meeting> mMeetings;
 
-	public static ListMeetingFragment newInstance() {
+	public static ListMeetingFragment newInstance(List<Meeting> meetings) {
+		mMeetings = meetings;
 		return new ListMeetingFragment();
 	}
 
@@ -47,21 +48,23 @@ public class ListMeetingFragment extends Fragment {
 		Context context = view.getContext();
 		mRecyclerView = (RecyclerView) view;
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-		mRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
+		mRecyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 		initList();
 		return view;
 	}
 
 	private void initList() {
-		((AppCompatActivity) getActivity()).getSupportActionBar().show();
-		List<Meeting> mMeetings = mApiService.getMeetings();
-		mAdapter = new ListMeetingRecyclerViewAdapter(mMeetings, getContext());
-		((MyApplication)getActivity().getApplication()).setRefToAdapter(mAdapter);
-		mRecyclerView.setAdapter(mAdapter);
+		Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+
+		ListMeetingRecyclerViewAdapter adapter = new ListMeetingRecyclerViewAdapter(mMeetings, getContext());
+		((MyApplication) requireActivity().getApplication()).setRefToAdapter(adapter);
+		mRecyclerView.setAdapter(adapter);
 	}
 
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getActivity().getMenuInflater().inflate(R.menu.menu_de_filtrage, menu);
-		return true;
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
 	}
 }

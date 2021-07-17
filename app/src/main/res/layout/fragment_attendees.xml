@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_person_24"
         tools:ignore="MissingConstraints"
-        android:contentDescription="@string/picto_person" />
+        android:contentDescription="@string/logo_person" />
 
     <TextView
         android:id="@+id/attendee_name"

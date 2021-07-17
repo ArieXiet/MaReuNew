@@ -9,9 +9,11 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     tools:actionBarNavMode="standard"
-    tools:menu="@menu/menu_de_filtrage"
+    tools:menu="@menu/filter_menu"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".ui.list_meeting.ListMeetingFragment"
+    tools:context=".ui.list.ListMeetingFragment"
     tools:listitem="@layout/fragment_meeting">
+
+
 
 </androidx.recyclerview.widget.RecyclerView>

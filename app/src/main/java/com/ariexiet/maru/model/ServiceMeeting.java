@@ -4,24 +4,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class ServiceMeeting implements Serializable {
-	private Calendar mDate;
-	private Calendar mStartDate;
-	private Calendar mEndDate;
+public class ServiceMeeting extends Meeting implements Serializable {
 
-	private MeetingRoom mRoom;
-	private String mSubject;
-	private ArrayList<Employee> mAttendees;
+	private Calendar mStartDate;
 	private boolean mInProgress;
 
-	public ServiceMeeting(Calendar date, Calendar startDate, Calendar endDate, MeetingRoom room,
+	/**
+	 *  Defines the ServiceMeeting object which will be used to store a meeting while it's created by user
+	 * @param date the day it takes place
+	 * @param length for how long
+	 * @param room in which room
+	 * @param subject what it is about
+	 * @param attendees who's attending
+	 * @param inProgress is it currently being booked
+	 */
+	public ServiceMeeting(Calendar date, int length, Calendar startDate, MeetingRoom room,
 	                      String subject, ArrayList<Employee> attendees, boolean inProgress) {
-		mDate = date;
+		super(date, length, room, subject, attendees);
 		mStartDate = startDate;
-		mEndDate = endDate;
-		mRoom = room;
-		mSubject = subject;
-		mAttendees = attendees;
 		mInProgress = inProgress;
 	}
 
@@ -33,38 +33,6 @@ public class ServiceMeeting implements Serializable {
 		mInProgress = inProgress;
 	}
 
-	public Calendar getDate() {
-		return mDate;
-	}
-
-	public void setDate(Calendar date) {
-		mDate = date;
-	}
-
-	public MeetingRoom getRoom() {
-		return mRoom;
-	}
-
-	public void setRoom(MeetingRoom room) {
-		this.mRoom = room;
-	}
-
-	public String getSubject() {
-		return mSubject;
-	}
-
-	public void setSubject(String subject) {
-		this.mSubject = subject;
-	}
-
-	public ArrayList<Employee> getAttendees() {
-		return mAttendees;
-	}
-
-	public void setAttendees(ArrayList<Employee> attendees) {
-		this.mAttendees = attendees;
-	}
-
 	public Calendar getStartDate() {
 		return mStartDate;
 	}
@@ -72,14 +40,5 @@ public class ServiceMeeting implements Serializable {
 	public void setStartDate(Calendar startDate) {
 		mStartDate = startDate;
 	}
-
-	public Calendar getEndDate() {
-		return mEndDate;
-	}
-
-	public void setEndDate(Calendar endDate) {
-		mEndDate = endDate;
-	}
-
 
 }

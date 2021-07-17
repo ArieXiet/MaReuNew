@@ -3,7 +3,6 @@ package com.ariexiet.maru.ui.new_meeting;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +16,7 @@ import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -24,45 +24,38 @@ import com.ariexiet.maru.R;
 import com.ariexiet.maru.di.DI;
 import com.ariexiet.maru.model.Employee;
 import com.ariexiet.maru.model.Meeting;
-import com.ariexiet.maru.model.MeetingRoom;
 import com.ariexiet.maru.model.ServiceMeeting;
 import com.ariexiet.maru.service.MeetingApiService;
 import com.ariexiet.maru.MainActivity;
-import com.ariexiet.maru.ui.list.ListMeetingFragment;
+import com.ariexiet.maru.ui.list.ListMeetingContainerFragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ *  Used to create a new meeting
+ */
 public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
-
 	public int mYear;
 	public int mMonth;
 	public int mDayOfMonth;
 	public int mStartHour;
-	public int mEndHour;
 	public int mStartMinute;
-	public int mEndMinute;
 	public ServiceMeeting mPreparedMeeting;
 	public Calendar mStartDate = Calendar.getInstance();
-	public Calendar mEndDate = Calendar.getInstance();
 	public Calendar mC = Calendar.getInstance();
-	public boolean mCheckStop;
-	public boolean mDateOn;
-	public boolean mStartOn;
-	public boolean mEndOn;
-	private static final String TAG = "NewMeetingFragment";
-
+	private MeetingApiService mApiService;
 	private static NewMeetingFragment mInstance;
-	@BindView(R.id.editText_sujet)
-	public TextInputLayout mEditSujet;
+
+	@BindView(R.id.editText_subject)
+	public TextInputLayout mEditSubject;
 	@BindView(R.id.date)
 	public TextView mDate;
 	@BindView(R.id.color)
@@ -76,7 +69,7 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 	@BindView(R.id.image_room)
 	public ImageView mColorRoom;
 	@BindView(R.id.image_attendees)
-	public ImageView mColorAtten;
+	public ImageView mColorAttendee;
 	@BindView(R.id.date_big)
 	public TextView mDateBig;
 	@BindView(R.id.time)
@@ -87,10 +80,10 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 	public TextView mAttendees;
 	@BindView(R.id.checked_room)
 	public TextView mCheckedRoom;
+	@BindView(R.id.error)
+	public TextView mError;
 	@BindView(R.id.button2)
 	public Button mValidButton;
-
-	private MeetingApiService mApiService;
 
 	public static NewMeetingFragment newInstance() {
 		mInstance = new NewMeetingFragment();
@@ -107,37 +100,30 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_new_meeting, container, false);
 		ButterKnife.bind(this, view);
+		Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
 
-		mDateOn = false;
-		mStartOn = false;
-		mEndOn = false;
 		mApiService = DI.getMeetingApiService();
 		mPreparedMeeting = mApiService.getServiceMeeting();
-		mCheckStop = false;
 
 		mDateBig.setOnClickListener(v -> {
 			DialogFragment datePicker = new DatePickerFragment(mInstance);
-			datePicker.show(Objects.requireNonNull(NewMeetingFragment.this.getFragmentManager()), "date picker");
+			datePicker.show(NewMeetingFragment.this.getParentFragmentManager(), "date picker");
 		});
 		mTimeBig.setOnClickListener(v -> {
 			DialogFragment timePicker = new TimePickerFragment(mInstance);
-			timePicker.show(Objects.requireNonNull(NewMeetingFragment.this.getFragmentManager()), "time picker");
+			timePicker.show(NewMeetingFragment.this.getParentFragmentManager(), "time picker");
 		});
 		mAttendees.setOnClickListener(v -> {
-			mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSujet.getEditText()).getText().toString());
+			mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSubject.getEditText()).getText().toString());
 			mPreparedMeeting.setInProgress(true);
-			mCheckStop = true;
-			AttendeesCheckListFragment fragment = new AttendeesCheckListFragment();
-			((MainActivity) Objects.requireNonNull(getActivity())) .replaceFragment(fragment, "frags");
+			AttendeesCheckListFragment fragment = AttendeesCheckListFragment.newInstance();
+			((MainActivity) requireActivity()) .replaceFragment(fragment, "frags");
 		});
 		mCheckedRoom.setOnClickListener(v -> {
-			mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSujet.getEditText()).getText().toString());
+			mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSubject.getEditText()).getText().toString());
 			mPreparedMeeting.setInProgress(true);
-			mCheckStop = true;
-			RoomCheckListFragment fragment = new RoomCheckListFragment();
-			((MainActivity) Objects.requireNonNull(getActivity())) .replaceFragment(fragment, "frags");
+			((MainActivity) requireActivity()) .replaceFragment(RoomCheckListFragment.newInstance("new"), "frags");
 		});
-		//initList();
 		return view;
 	}
 
@@ -146,35 +132,58 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
+	/**
+	 *  Enable the button to create meeting when every data is acquired
+	 *  and if the meeting room is available at required time
+	 */
 	private void enableButton() {
-		if(mPreparedMeeting.getDate()!=null && mPreparedMeeting.getSubject()!=null && mPreparedMeeting.getStartDate()!=null
-		&& mPreparedMeeting.getAttendees()!=null && mPreparedMeeting.getRoom()!=null) {
-			mValidButton.setEnabled(true);
+		boolean isAvailable = false;
+		if (mPreparedMeeting.getRoom() != null) {
+			for(int i = 0; i < mApiService.getMeetings().size(); i++) {
+				long meetingInListTime = mApiService.getMeetings().get(i).getDate().getTimeInMillis();
+				int meetingInListRoom = mApiService.getMeetings().get(i).getRoom().getRoomNumber();
+				long meetingToTestTime = mPreparedMeeting.getDate().getTimeInMillis();
+				if(meetingInListRoom == mPreparedMeeting.getRoom().getRoomNumber() &&
+						meetingInListTime < meetingToTestTime && meetingToTestTime < (meetingInListTime + 2700000) ||
+						(meetingToTestTime + 2700000) > meetingInListTime && (meetingToTestTime + 2700000) < (meetingInListTime + 2700000)) {
+					mError.setText(R.string.not_available);
+					mError.setTextColor(0xFFFF0000);
+					isAvailable = false;
+					break;
+				}else {
+					isAvailable = true;
+				}
+			}
+			if(mPreparedMeeting.getDate() != null && mPreparedMeeting.getSubject() != null && mPreparedMeeting.getStartDate() != null
+					&& mPreparedMeeting.getAttendees() != null && mPreparedMeeting.getRoom() != null && isAvailable) {
+				mValidButton.setEnabled(true);
+				mError.setText("");
+			}
 		}
 	}
 
 	private void initList() {
 		mValidButton.setEnabled(false);
+		Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
 		enableButton();
 		if(mPreparedMeeting.isInProgress()) {
 			if(mPreparedMeeting.getDate() != null) {
 				String currentDateString = DateFormat.getDateInstance(DateFormat.FULL).format(mPreparedMeeting.getDate().getTime());
 				mDateBig.setText(currentDateString);
 				mDate.setText("Date");
-				mYear = mPreparedMeeting.getDate().YEAR;
-				mMonth = mPreparedMeeting.getDate().MONTH;
-				mDayOfMonth = mPreparedMeeting.getDate().DAY_OF_MONTH;
+				mYear = mPreparedMeeting.getDate().get(Calendar.YEAR);
+				mMonth = mPreparedMeeting.getDate().get(Calendar.MONTH);
+				mDayOfMonth = mPreparedMeeting.getDate().get(Calendar.DAY_OF_MONTH);
 			}
 			if(mPreparedMeeting.getStartDate() != null){
-				int hourOfDay = mPreparedMeeting.getStartDate().HOUR_OF_DAY;
-				int minute = mPreparedMeeting.getStartDate().MINUTE;
-				Log.d(TAG, "initList: DEBUG:" + String.format("%02d", hourOfDay) + " : " + String.format("%02d", minute));
+				int hourOfDay = mPreparedMeeting.getDate().get(Calendar.HOUR);
+				int minute = mPreparedMeeting.getDate().get(Calendar.MINUTE);
 				mTimeBig.setText(String.format("%02d", hourOfDay) + " : " + String.format("%02d", minute));
 				mTime.setText("Time");
 			}
 
 			if(mPreparedMeeting.getSubject() != null)
-				Objects.requireNonNull(mEditSujet.getEditText()).setText(mPreparedMeeting.getSubject());
+				Objects.requireNonNull(mEditSubject.getEditText()).setText(mPreparedMeeting.getSubject());
 			String mAttendeesToText = "";
 			ArrayList<Employee> mEmployeeToText = mPreparedMeeting.getAttendees();
 			if(mEmployeeToText != null) {
@@ -188,45 +197,13 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 			}
 			if(mPreparedMeeting.getRoom() != null) {
 				mColor.setColorFilter(mPreparedMeeting.getRoom().getRoomColor());
-				mColorAtten.setColorFilter(mPreparedMeeting.getRoom().getRoomColor());
+				mColorAttendee.setColorFilter(mPreparedMeeting.getRoom().getRoomColor());
 				mColorDate.setColorFilter(mPreparedMeeting.getRoom().getRoomColor());
 				mColorRoom.setColorFilter(mPreparedMeeting.getRoom().getRoomColor());
 				mColorSubject.setColorFilter(mPreparedMeeting.getRoom().getRoomColor());
 				mColorTime.setColorFilter(mPreparedMeeting.getRoom().getRoomColor());
-				String mRoomToText = "";
-				int mRoomNumber = mPreparedMeeting.getRoom().getRoomNumber();
-				switch(mRoomNumber) {
-					case 1:
-						mRoomToText = "Salle 1";
-						break;
-					case 2:
-						mRoomToText = "Salle 2";
-						break;
-					case 3:
-						mRoomToText = "Salle 3";
-						break;
-					case 4:
-						mRoomToText = "Salle 4";
-						break;
-					case 5:
-						mRoomToText = "Salle 5";
-						break;
-					case 6:
-						mRoomToText = "Salle 6";
-						break;
-					case 7:
-						mRoomToText = "Salle 7";
-						break;
-					case 8:
-						mRoomToText = "Salle 8";
-						break;
-					case 9:
-						mRoomToText = "Salle 9";
-						break;
-					case 10:
-						mRoomToText = "Salle 10";
-						break;
-				}
+				String mRoomToText;
+				mRoomToText = mPreparedMeeting.getRoom().getRoomName();
 				mCheckedRoom.setText(mRoomToText);
 			}
 		}
@@ -236,22 +213,8 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 	public void onResume() {
 		super.onResume();
 		initList();
+		enableButton();
 	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		if (!mCheckStop) {
-			Fragment fragment = new ListMeetingFragment();
-			((MainActivity) Objects.requireNonNull(getActivity())).replaceFragment(fragment, "frags");
-		}
-	}
-
 
 	@Override
 	public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -263,54 +226,34 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 		mC.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 		String currentDateString = DateFormat.getDateInstance(DateFormat.FULL).format(mC.getTime());
 		mDate.setText("Date");
-		Log.d(TAG, "onDateSet: DEBUG:" + currentDateString);
 		mDateBig.setText(currentDateString);
 		mPreparedMeeting.setDate(mC);
-		Log.d(TAG, "onDateSet: DEBUG: mC" + mC.getTime());
 		mPreparedMeeting.setInProgress(true);
-		mDateOn = true;
-		if (mStartOn && mEndOn) {
 			enableButton();
-		}
+
 	}
 
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
 			mStartHour = hourOfDay;
 			mStartMinute = minute;
 			mC.set(Calendar.HOUR_OF_DAY, hourOfDay);
 			mC.set(Calendar.MINUTE, minute);
-			Calendar mTest = Calendar.getInstance();
-			mTest.set(2000,01,01,hourOfDay,minute);
 			mPreparedMeeting.setStartDate(mC);
 			mPreparedMeeting.setInProgress(true);
 			mTimeBig.setText(String.format("%02d", hourOfDay) + " : " + String.format("%02d", minute));
 			mTime.setText("Time");
-			mStartOn = true;
 			mStartDate.set(Calendar.HOUR_OF_DAY, mStartHour);
 			mStartDate.set(Calendar.MINUTE, mStartMinute);
-			Log.d(TAG, "onTimeSet: DEBUG" + mStartDate.getTime());
-			//createStartDate();
-			if (mDateOn && mEndOn) {
-				enableButton();
-			}
+			enableButton();
 	}
 
-
-	/*private void createStartDate() {
-		mStartDate.set(Calendar.HOUR, mStartHour);
-		mStartDate.set(Calendar.MINUTE, mStartMinute);
-	}*/
-
-	private void createEndDate() {
-		mEndDate.set(Calendar.HOUR, mEndHour);
-		mEndDate.set(Calendar.MINUTE, mEndMinute);
-	}
-
+	/**
+	 *  Used to create a meeting with the information from user
+	 */
 	@OnClick(R.id.button2)
 	void addMeeting() {
-		mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSujet.getEditText()).getText().toString());
+		mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSubject.getEditText()).getText().toString());
 		Calendar mFinal;
 		mPreparedMeeting.setRoom(mPreparedMeeting.getRoom());
 		mFinal = mPreparedMeeting.getDate();
@@ -323,7 +266,7 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 		mPreparedMeeting.setAttendees(null);
 		mPreparedMeeting.setSubject(null);
 		mPreparedMeeting.setDate(null);
-		Fragment fragment = new ListMeetingFragment();
-		((MainActivity) Objects.requireNonNull(getActivity())).replaceFragment(fragment, "frags");
+		Fragment fragment = new ListMeetingContainerFragment();
+		((MainActivity) requireActivity()).replaceFragment(fragment, "frags");
 	}
 }

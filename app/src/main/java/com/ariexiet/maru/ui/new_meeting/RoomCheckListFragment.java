@@ -20,26 +20,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ariexiet.maru.MainActivity;
 import com.ariexiet.maru.R;
 import com.ariexiet.maru.di.DI;
+import com.ariexiet.maru.model.Meeting;
 import com.ariexiet.maru.model.MeetingRoom;
 import com.ariexiet.maru.service.MeetingApiService;
+import com.ariexiet.maru.ui.list.ListMeetingContainerFragment;
 
 import java.util.List;
 import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
+/**
+ * Displays the list of rooms and save the one checked by user
+ */
 public class RoomCheckListFragment extends Fragment {
 	private MeetingApiService mApiService;
 	private RecyclerView mRecyclerView;
 	private RoomCheckListRecyclerViewAdapter mAdapter;
+	private static String mCall;
 
-	public interface ISelectedRoomListener {
-		public void getSelectedRoom(int roomNumber);
-	}
-
-	public static RoomCheckListFragment newInstance() {
-		RoomCheckListFragment fragment = new RoomCheckListFragment();
-		return fragment;
+	public static RoomCheckListFragment newInstance(String call) {
+		mCall = call;
+		return new RoomCheckListFragment();
 	}
 
 	@Override
@@ -56,16 +58,21 @@ public class RoomCheckListFragment extends Fragment {
 		mRecyclerView = view.findViewById(R.id.list_room_check);
 		Button mRoomButton = view.findViewById(R.id.room_button);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-		mRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
+		mRecyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 		initList();
-		mRoomButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				//TODO NewMeeting ou MainActivity ((MainActivity)getActivity()).getSelectedRoom
+		mRoomButton.setOnClickListener(v -> {
+			if (Objects.equals(mCall, "new")) {
 				mApiService.getServiceMeeting().setRoom(mAdapter.mCheckedRoom);
 				NewMeetingFragment fragment = new NewMeetingFragment();
-				((MainActivity)getActivity()).replaceFragment(fragment, "frags");
-
+				((MainActivity) requireActivity()).replaceFragment(fragment, "frags");
+			} else if (Objects.equals(mCall, "list")) {
+				Bundle result = new Bundle();
+				result.putInt("bundleKey", mAdapter.mCheckedRoom.getRoomNumber());
+				getParentFragmentManager().setFragmentResult("requestKey", result);
+				List<Meeting> mMeetingByRoom;
+				mMeetingByRoom = DI.getMeetingApiService().getMeetingsByRoom(mAdapter.mCheckedRoom.getRoomNumber());
+				ListMeetingContainerFragment fragment = ListMeetingContainerFragment.newInstance(requireActivity().getApplicationContext(), mMeetingByRoom);
+				((MainActivity) requireActivity()).replaceFragment(fragment, "frags");
 			}
 		});
 		return view;
@@ -88,13 +95,5 @@ public class RoomCheckListFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		initList();
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		Log.d(TAG, "AttendeesCheckListFrag onStop: DEBUG:");
-		//NewMeetingFragment fragment = new NewMeetingFragment();
-		//((MainActivity)getActivity()).replaceFragment(fragment, "frags");
 	}
 }
