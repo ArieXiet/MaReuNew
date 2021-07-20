@@ -86,6 +86,7 @@ public class ListMeetingRecyclerViewAdapter extends RecyclerView.Adapter<ListMee
 		holder.mDeleteButton.setOnClickListener(view -> {
 			DI.getMeetingApiService().deleteMeeting(mMeeting);
 			notifyItemRemoved(position);
+			this.notifyDataSetChanged();
 			});
 	}
 
