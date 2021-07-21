@@ -34,9 +34,9 @@ public class MeetingTest {
 	@Test
 	public void createMeetingWithSuccess() {
 		int MeetingsBefore = mDummyMeetingApiService.getMeetings().size();
-		Meeting newMeeting = new Meeting(new GregorianCalendar(2021, 8, 1),
-				45, DummyMeetingGenerator.mMeetingRoom1, "RAS", new ArrayList<>(Arrays.asList(mSebastien, mMarc)));
-		mDummyMeetingApiService.createMeeting(newMeeting);
+		mDummyMeetingApiService.createMeeting(new GregorianCalendar(2021, 8, 1),
+				DummyMeetingGenerator.mMeetingRoom1, "RAS",
+				new ArrayList<>(Arrays.asList(mSebastien, mMarc)));
 		int MeetingsAfter = mDummyMeetingApiService.getMeetings().size();
 		assertEquals(MeetingsAfter, (MeetingsBefore + 1));
 	}

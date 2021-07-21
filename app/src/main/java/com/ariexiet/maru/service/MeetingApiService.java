@@ -6,6 +6,7 @@ import com.ariexiet.maru.model.Meeting;
 import com.ariexiet.maru.model.MeetingRoom;
 import com.ariexiet.maru.model.ServiceMeeting;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public interface MeetingApiService {
 
 	void deleteMeeting(Meeting meeting);
 
-	void createMeeting(Meeting meeting);
+	void createMeeting(Calendar date, MeetingRoom room, String subject
+			, ArrayList<Employee> attendees);
 
 }

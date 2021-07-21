@@ -72,6 +72,7 @@ public class MeetingRoom {
 		}
 		return mName;
 	}
+
 	public int getRoomLogo() {
 		switch (mRoomNumber) {
 			case 1:
@@ -107,6 +108,7 @@ public class MeetingRoom {
 		}
 		return mRoomLogo;
 	}
+
 	public int getRoomColor() {
 		mColor = Color.rgb(mListColor.get(mRoomNumber -1).get(0),
 				mListColor.get(mRoomNumber -1).get(1), mListColor.get(mRoomNumber -1).get(2));
