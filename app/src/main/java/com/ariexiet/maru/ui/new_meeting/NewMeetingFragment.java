@@ -161,7 +161,7 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 		}
 	}
 
-	private void initList() {
+	private void initPrepMeet() {
 		mValidButton.setEnabled(false);
 		Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
 		enableButton();
@@ -211,7 +211,7 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 	@Override
 	public void onResume() {
 		super.onResume();
-		initList();
+		initPrepMeet();
 		enableButton();
 	}
 

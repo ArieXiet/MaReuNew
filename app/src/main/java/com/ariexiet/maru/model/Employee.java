@@ -18,11 +18,6 @@ public class Employee implements Parcelable {
 		mEmail = email;
 	}
 
-	protected Employee(Parcel in) {
-		mName = in.readString();
-		mEmail = in.readString();
-	}
-
 	public String getEmail() {
 		return mEmail;
 	}
@@ -37,6 +32,11 @@ public class Employee implements Parcelable {
 
 	public void setName(String name) {
 		mName = name;
+	}
+
+	protected Employee(Parcel in) {
+		mName = in.readString();
+		mEmail = in.readString();
 	}
 
 	public static final Creator<Employee> CREATOR = new Creator<Employee>() {

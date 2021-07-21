@@ -15,9 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ariexiet.maru.MyApplication;
 import com.ariexiet.maru.R;
-import com.ariexiet.maru.di.DI;
 import com.ariexiet.maru.model.Meeting;
-import com.ariexiet.maru.service.MeetingApiService;
 
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +24,6 @@ import java.util.Objects;
  * Displays the list of meetings
  */
 public class ListMeetingFragment extends Fragment {
-	private MeetingApiService mApiService;
 	private RecyclerView mRecyclerView;
 	private static List<Meeting> mMeetings;
 
@@ -38,7 +35,6 @@ public class ListMeetingFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mApiService = DI.getMeetingApiService();
 	}
 
 	@Override
