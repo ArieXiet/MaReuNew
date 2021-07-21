@@ -81,7 +81,7 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 	public TextView mCheckedRoom;
 	@BindView(R.id.error)
 	public TextView mError;
-	@BindView(R.id.button2)
+	@BindView(R.id.button_create)
 	public Button mValidButton;
 
 	public static NewMeetingFragment newInstance() {
@@ -228,8 +228,7 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 		mDateBig.setText(currentDateString);
 		mPreparedMeeting.setDate(mC);
 		mPreparedMeeting.setInProgress(true);
-			enableButton();
-
+		enableButton();
 	}
 
 	@Override
@@ -250,7 +249,7 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 	/**
 	 *  Used to create a meeting with the information from user
 	 */
-	@OnClick(R.id.button2)
+	@OnClick(R.id.button_create)
 	void addMeeting() {
 		mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSubject.getEditText()).getText().toString());
 		mPreparedMeeting.setRoom(mPreparedMeeting.getRoom());

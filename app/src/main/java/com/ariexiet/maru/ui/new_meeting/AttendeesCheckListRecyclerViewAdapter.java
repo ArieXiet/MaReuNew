@@ -67,13 +67,16 @@ public class AttendeesCheckListRecyclerViewAdapter extends RecyclerView.Adapter<
 	}
 	@NonNull
 	@Override
-	public AttendeesCheckListRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_attendees_check,parent,false);
+	public AttendeesCheckListRecyclerViewAdapter
+			.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+		View view = LayoutInflater.from(parent.getContext())
+				.inflate(R.layout.fragment_attendees_check,parent,false);
 		return new ViewHolder(view);
 	}
 
 	@Override
-	public void onBindViewHolder(@NonNull final AttendeesCheckListRecyclerViewAdapter.ViewHolder holder, final int position) {
+	public void onBindViewHolder(@NonNull final AttendeesCheckListRecyclerViewAdapter
+			.ViewHolder holder, final int position) {
 		holder.bind(position);
 		final Employee mEmployee = mEmployees.get(position);
 		if (!mCheckedEmployees.contains(mEmployee)) {

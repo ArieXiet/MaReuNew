@@ -185,7 +185,7 @@ public class MainActivityTest {
 		appCompatButton4.perform(click());
 
 		ViewInteraction appCompatButton5 = onView(
-				allOf(withId(R.id.button2), withText("CREER"),
+				allOf(withId(R.id.button_create), withText("CREER"),
 						childAtPosition(
 								childAtPosition(
 										withId(R.id.container),

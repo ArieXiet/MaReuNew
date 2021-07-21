@@ -2,7 +2,6 @@ package com.ariexiet.maru.ui.new_meeting;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,8 +26,6 @@ import com.ariexiet.maru.ui.list.ListMeetingContainerFragment;
 
 import java.util.List;
 import java.util.Objects;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Displays the list of rooms and save the one checked by user
@@ -85,7 +82,6 @@ public class RoomCheckListFragment extends Fragment {
 
 
 	private void initList() {
-		Log.d(TAG, "DEBUG: initList: ");
 		List<MeetingRoom> mRoom = mApiService.getMeetingRooms();
 		mAdapter = new RoomCheckListRecyclerViewAdapter(mRoom, getContext());
 		mRecyclerView.setAdapter(mAdapter);

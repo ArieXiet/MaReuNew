@@ -103,6 +103,4 @@ public class RoomCheckListRecyclerViewAdapter extends RecyclerView.Adapter<RoomC
 		return mRooms.size();
 	}
 
-
-
 }
