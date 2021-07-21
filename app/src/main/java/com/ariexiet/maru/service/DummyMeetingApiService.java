@@ -63,10 +63,10 @@ public class DummyMeetingApiService implements MeetingApiService {
 
 	/**
 	 * Used to add a meeting in generator
-	 * @param date
-	 * @param room
-	 * @param subject
-	 * @param attendees
+	 * @param date date of the meeting to create
+	 * @param room room of the meeting to create
+	 * @param subject subject of the meeting to create
+	 * @param attendees attendees to the meeting to create
 	 */
 	@Override
 	public void createMeeting(Calendar date, MeetingRoom room, String subject
