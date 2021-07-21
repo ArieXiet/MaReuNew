@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 		  if there's no saved instance, launch ListMeetingFragment
 		 */
 		if (null == savedInstanceState) {
-			replaceFragment(ListMeetingContainerFragment.newInstance(mContext, DI.getMeetingApiService().getMeetings()), "frags");
+			replaceFragment(ListMeetingContainerFragment
+					.newInstance(mContext, DI.getMeetingApiService().getMeetings()), "frags");
 		}
 	}
 
@@ -76,11 +77,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 	public boolean onOptionsItemSelected(MenuItem item) {
 		ListMeetingRecyclerViewAdapter mAdapter = ((MyApplication)getApplication()).getRefToAdapter();
 		switch(item.getItemId()) {
-			case R.id.action_sort:
+			case R.id.action_sort_date:
 				DialogFragment datePicker = new DatePickerFragment(this);
 				datePicker.show(getSupportFragmentManager(), "date picker");
 				return true;
-			case R.id.action_sort2:
+			case R.id.action_sort_room:
 				replaceFragment(RoomCheckListFragment.newInstance("list"), "frags");
 				RoomCheckListFragment fragment = new RoomCheckListFragment();
 				replaceFragment(fragment, "frags");
