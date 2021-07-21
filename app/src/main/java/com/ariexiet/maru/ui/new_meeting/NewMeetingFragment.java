@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment;
 import com.ariexiet.maru.R;
 import com.ariexiet.maru.di.DI;
 import com.ariexiet.maru.model.Employee;
-import com.ariexiet.maru.model.Meeting;
 import com.ariexiet.maru.model.ServiceMeeting;
 import com.ariexiet.maru.service.MeetingApiService;
 import com.ariexiet.maru.MainActivity;
