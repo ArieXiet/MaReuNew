@@ -252,7 +252,6 @@ public class NewMeetingFragment extends Fragment implements DatePickerDialog.OnD
 	@OnClick(R.id.button_create)
 	void addMeeting() {
 		mPreparedMeeting.setSubject(Objects.requireNonNull(mEditSubject.getEditText()).getText().toString());
-		mPreparedMeeting.setRoom(mPreparedMeeting.getRoom());
 		mApiService.createMeeting(mPreparedMeeting.getDate(), mPreparedMeeting.getRoom(),
 				mPreparedMeeting.getSubject(), mPreparedMeeting.getAttendees());
 		mPreparedMeeting.setInProgress(false);

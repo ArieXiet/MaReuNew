@@ -63,9 +63,6 @@ public class RoomCheckListFragment extends Fragment {
 				NewMeetingFragment fragment = new NewMeetingFragment();
 				((MainActivity) requireActivity()).replaceFragment(fragment, "frags");
 			} else if (Objects.equals(mCall, "list")) {
-				Bundle result = new Bundle();
-				result.putInt("bundleKey", mAdapter.mCheckedRoom.getRoomNumber());
-				getParentFragmentManager().setFragmentResult("requestKey", result);
 				List<Meeting> mMeetingByRoom;
 				mMeetingByRoom = DI.getMeetingApiService().getMeetingsByRoom(mAdapter.mCheckedRoom.getRoomNumber());
 				ListMeetingContainerFragment fragment = ListMeetingContainerFragment.newInstance(requireActivity().getApplicationContext(), mMeetingByRoom);
